@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Myself</title>
+</h:head>
+<h:body style="background-color: #EEE">
+
+	<div style="background-color: #30A0F0; height: 12em; width:100%;position: absolute; left:0px; top:0px"></div>
+
+	<div style="margin-left: 18em; margin-right: 18em; position: absolute; min-width: 50em">
+
+
+		<p:outputLabel>MYSELF</p:outputLabel>
+
+		<p:card>
+			<f:facet name="title">
+				Novo Registro
+			</f:facet>
+
+
+			<h:form id="frmNovoRegistro">
+
+				<p:inputText id="descricao" required="true"
+					requiredMessage="Este campo é obrigatório" placeholder="Descrição"
+					value="#{registrosBean.novoRegistro.descricao}" />
+				<p:message for="descricao" />
+				<p:focus for="descricao" />
+				<br />
+
+				<p:inputNumber value="#{registrosBean.novoRegistro.valor}"
+					emptyValue="zero" decimalPlaces="2" symbol="R$ " />
+				<br />
+
+				<p:datePicker readonlyInput="true"
+					value="#{registrosBean.novoRegistro.data}" />
+
+				<p:growl life="1500" for="buttonSalvar" />
+			</h:form>
+
+			<f:facet name="footer">
+				<p:commandButton icon="pi pi-check" value="Salvar Registro"
+					update="frmNovoRegistro lstRegistros"
+					action="#{registrosBean.salvarRegistro}" />
+			</f:facet>
+		</p:card>
+
+
+		<p:panel style="margin-top: 1em;">
+			<f:facet name="header">Meus registros</f:facet>
+
+			<p:dataTable id="lstRegistros" var="registro"
+				value="#{registrosBean.registros}">
+
+				<p:column headerText="Descrição">
+					<h:outputText value="#{registro.descricao}" />
+				</p:column>
+
+				<p:column headerText="Valor">
+					<h:outputText value="#{registro.valor}">
+						<f:convertNumber type="currency" locale="pt" currencySymbol="R$" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Data">
+					<h:outputText value="#{registro.data}">
+						<f:converter converterId="localDateConverter" />
+					</h:outputText>
+				</p:column>
+
+
+
+			</p:dataTable>
+		</p:panel>
+	</div>
+
+</h:body>
+</html>
