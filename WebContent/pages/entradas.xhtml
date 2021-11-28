@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	template="../WEB-INF/layout/template.xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+	<ui:define name="content">
+
+
+		<h:form id="frmEntradas" style="margin-bottom: 20px">
+
+			<p:dataTable id="lstEntradas" var="entrada" paginator="true"
+				paginatorPosition="bottom" rows="8" value="#{entradasBean.entradas}"
+				widgetVar="dtEntradas" emptyMessage="Não há entradas.">
+
+				<f:facet name="header">
+					<h:outputText value="Minhas Entradas" />
+				</f:facet>
+
+				<p:column headerText="Descrição" colspan="2">
+					<h:outputText value="#{entrada.descricao}" />
+				</p:column>
+
+				<p:column headerText="Valor">
+					<h:outputText value="#{entrada.valor}">
+						<f:convertNumber type="currency" locale="pt" currencySymbol="R$" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Data">
+					<h:outputText value="#{entrada.data}"
+						converter="maskDateToLongConverter" />
+				</p:column>
+
+				<p:column headerText="Ações">
+					<p:commandButton process="@this" icon="pi pi-pencil"
+						update=":frmEntradas:dialog-editar-entrada"
+						oncomplete="PF('dialogEditar').show()" style="margin-right: 5px;">
+
+						<f:setPropertyActionListener value="#{entrada}"
+							target="#{entradasBean.entradaSelecionada}" />
+					</p:commandButton>
+
+					<p:commandButton onclick="PF('dialogExcluir').show()"
+						process="@this" icon="pi pi-trash"
+						styleClass="ui-button-secondary">
+
+						<f:setPropertyActionListener value="#{entrada}"
+							target="#{entradasBean.entradaSelecionada}" />
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+
+			<!-- DIALOGS -->
+			<p:dialog closeOnEscape="true" modal="true" closable="false"
+				width="400px" widgetVar="dialogExcluir" header="Excluir"
+				hideEffect="explode">
+
+				<h:outputText value="Deseja excluir a entrada?" />
+
+				<f:facet name="footer">
+					<p:commandButton process="@this"
+						actionListener="#{entradasBean.excluirEntrada}" value="Excluir"
+						oncomplete="PF('dialogExcluir').hide()"
+						update=":frmEntradas:lstEntradas" />
+
+					<p:commandButton type="button" value="Cancelar"
+						onclick="PF('dialogExcluir').hide()"
+						styleClass="ui-button-secondary ui-button-outlined" />
+				</f:facet>
+			</p:dialog>
+
+
+			<p:dialog id="dialog-editar-entrada" responsive="true" modal="true" closable="true"
+				hideEffect="fade" header="Editar Entrada" widgetVar="dialogEditar"
+				closeOnEscape="true">
+
+				<div class="insert-data-container">
+					<h:outputText value="Descrição" />
+					<p:inputText id="descricao" required="true"
+						requiredMessage="O campo Descrição é obrigatório"
+						placeholder="Descrição" validator="descricaoValidator"
+						value="#{entradasBean.entradaSelecionada.descricao}" />
+
+					<h:outputText value="Valor" />
+					<p:inputNumber id="valor"
+						value="#{entradasBean.entradaSelecionada.valor}"
+						validator="valorValidator" emptyValue="zero" decimalPlaces="2"
+						symbol="R$ " />
+
+					<h:outputText value="Data" />
+					<p:inputMask id="data" mask="99/99/9999" required="true"
+						requiredMessage="O campo Data é obrigatório"
+						converter="maskDateToLongConverter" placeholder="__/__/____"
+						value="#{entradasBean.entradaSelecionada.data}" />
+				</div>
+
+				<f:facet name="footer">
+					<p:commandButton process="dialog-editar-entrada @this"
+						actionListener="#{entradasBean.editarEntrada}" value="Atualizar"
+						oncomplete="PF('dialogEditar').hide()"
+						update=":frmEntradas:lstEntradas" />
+
+					<p:commandButton type="button" value="Cancelar"
+						onclick="PF('dialogEditar').hide()"
+						styleClass="ui-button-secondary ui-button-outlined" />
+				</f:facet>
+			</p:dialog>
+
+		</h:form>
+
+
+		<h:form>
+			<p:panel>
+				<f:facet name="header">Nova Entrada</f:facet>
+				<p:focus for="descricao" />
+				<p:messages closable="true" showIcon="false" style="font-size:small" />
+
+
+				<div class="insert-data-container">
+					<h:outputText value="Descrição" />
+					<p:inputText id="descricao" required="true"
+						requiredMessage="O campo Descrição é obrigatório"
+						placeholder="Descrição" validator="descricaoValidator"
+						value="#{entradasBean.novaEntrada.descricao}" />
+
+					<h:outputText value="Valor" />
+					<p:inputNumber id="valor" value="#{entradasBean.novaEntrada.valor}"
+						validator="valorValidator" emptyValue="zero" decimalPlaces="2"
+						symbol="R$ " />
+
+					<h:outputText value="Data" />
+					<p:inputMask id="data" mask="99/99/9999" required="true"
+						requiredMessage="O campo Data é obrigatório"
+						converter="maskDateToLongConverter" placeholder="__/__/____"
+						value="#{entradasBean.novaEntrada.data}" />
+				</div>
+
+
+				<f:facet name="footer">
+					<p:commandButton icon="pi pi-check" value="Salvar"
+						update="@form :frmEntradas:lstEntradas"
+						action="#{entradasBean.salvarEntrada}" />
+				</f:facet>
+			</p:panel>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>
